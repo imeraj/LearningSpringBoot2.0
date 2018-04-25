@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    com:meraj: DEBUG
+
+spring:
+  application:
+    name: "Learning Spring Boot"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+
