@@ -14,7 +14,7 @@
     <table>
         <thead>
         <tr>
-            <th>Id</th><th>Name</th><th>Image</th><th></th>
+            <th>Id</th><th>Name</th><th>Image</th><th>Action</th><th>Comments</th><th>New Comment</th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +33,21 @@
                     <input type="submit" value="Delete" />
                 </form>
             </td>
+            <!-- tag::comments[] -->
+            <td>
+                <ul>
+                    <li th:each="comment : ${image.comments}"
+                        th:text="${comment.comment}"></li>
+                </ul>
+            </td>
+            <td>
+                <form th:method="post" th:action="@{'/comments'}">
+                    <input name="comment" value="" type="text" />
+                    <input name="imageId" th:value="${image.id}" type="hidden" />
+                    <input type="submit" />
+                </form>
+            </td>
+            <!-- end::comments[] -->
         </tr>
         </tbody>
     </table>
