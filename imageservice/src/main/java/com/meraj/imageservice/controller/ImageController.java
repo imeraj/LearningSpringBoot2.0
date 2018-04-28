@@ -1,8 +1,6 @@
 package com.meraj.imageservice.controller;
 
-import com.meraj.imageservice.model.Image;
 import com.meraj.imageservice.service.ImageService;
-import com.sun.tools.internal.ws.processor.model.Response;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Controller
 public class ImageController {

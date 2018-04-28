@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Example;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -73,8 +74,12 @@ public class ImageService {
     }
 
     public Mono<Void> deleteImage(String filename) {
-        Mono<Void> deletaDatabaseImage = imageRepository
-                                            .findByName(filename)
+        Image image = new Image();
+        image.setName(filename);
+        Example<Image> example = Example.of(image);
+        Mono<Image> deleteImage = imageRepository.findOne(example);
+
+        Mono<Void> deleteDatabaseImage = deleteImage
                                             .flatMap(imageRepository::delete);
 
         Mono<Void> deleteFile = Mono.fromRunnable(() -> {
@@ -85,7 +90,7 @@ public class ImageService {
             }
         });
 
-        return Mono.when(deletaDatabaseImage, deleteFile)
+        return Mono.when(deleteDatabaseImage, deleteFile)
                 .then();
     }
 }
