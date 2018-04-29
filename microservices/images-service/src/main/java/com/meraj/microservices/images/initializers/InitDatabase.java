@@ -11,7 +11,7 @@ public class InitDatabase {
     @Bean
     CommandLineRunner init(MongoOperations mongoOperations) {
         return args -> {
-            mongoOperations.dropCollection(Image.class);
+//            mongoOperations.dropCollection(Image.class);
 
 //            mongoOperations.insert(new Image("1", "learning-spring-boot-cover.jpg"));
 //            mongoOperations.insert(new Image("2", "learning-spring-boot-2nd-edition-cover.jpg"));
