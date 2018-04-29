@@ -2,7 +2,12 @@ package com.meraj.imageservice.comments.service;
 
 import com.meraj.imageservice.comments.model.Comment;
 import com.meraj.imageservice.comments.repository.CommentRepository;
-import com.meraj.imageservice.images.model.Image;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -23,9 +28,20 @@ public class CommentService {
         return commentRepository.findAll(example);
     }
 
-    public Mono<Void> createComment(Mono<Comment> newComment) {
-        return newComment
-                .flatMap(commentRepository::save)
-                .then();
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue,
+            exchange = @Exchange(value = "imageservice"),
+            key = "comment.new"
+    ))
+    public void createComment(Comment newComment) {
+        commentRepository
+                .save(newComment)
+                .log("commentService-save")
+                .subscribe();
+    }
+
+    @Bean
+    Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 }
