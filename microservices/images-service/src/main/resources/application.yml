@@ -9,6 +9,7 @@ spring:
   application:
     name: images-service
 
+# http://localhost:9001/actuator/hystrix.stream
 management:
   endpoints:
     web:
