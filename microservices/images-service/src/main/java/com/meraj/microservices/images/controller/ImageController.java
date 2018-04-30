@@ -1,7 +1,10 @@
 package com.meraj.microservices.images.controller;
 
+import com.meraj.microservices.images.helpers.CommentHelper;
 import com.meraj.microservices.images.model.Comment;
+import com.meraj.microservices.images.model.Image;
 import com.meraj.microservices.images.service.ImageService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
@@ -17,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,11 +29,11 @@ public class ImageController {
     private static final String FILENAME = "{filename:.+}";
 
     private final ImageService imageService;
-    private final RestTemplate restTemplate;
+    private final CommentHelper commentHelper;
 
-    public ImageController(ImageService imageService, RestTemplate restTemplate) {
+    public ImageController(ImageService imageService, CommentHelper commentHelper) {
         this.imageService = imageService;
-        this.restTemplate = restTemplate;
+        this.commentHelper = commentHelper;
     }
 
     @GetMapping("/")
@@ -40,19 +44,13 @@ public class ImageController {
                         .map(image -> new HashMap<String, Object>() {{
                             put("id", image.getId());
                             put("name", image.getName());
-                            put("comments",
-                                    // tag::comments[]
-                                    restTemplate.exchange(
-                                            "http://COMMENTS-SERVICE/comments/{imageId}",
-                                            HttpMethod.GET,
-                                            null,
-                                            new ParameterizedTypeReference<List<Comment>>() {},
-                                            image.getId()).getBody());
-                            // end::comments[]
+                            put("comments", commentHelper.getComments(image));
                         }})
         );
         return Mono.just("index");
     }
+
+
 
     @GetMapping(value = "/images/" + FILENAME + "/raw",
             produces = MediaType.IMAGE_JPEG_VALUE)
