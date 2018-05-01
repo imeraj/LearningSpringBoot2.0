@@ -22,7 +22,7 @@ public class CommentHelper {
     @HystrixCommand(fallbackMethod = "defaultComments")
     public List<Comment> getComments(Image image) {
         return restTemplate.exchange(
-                "http://COMMENTS-SERVICE/comments/{imageId}",
+                "http://COMMENTS/comments/{imageId}",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Comment>>() {},

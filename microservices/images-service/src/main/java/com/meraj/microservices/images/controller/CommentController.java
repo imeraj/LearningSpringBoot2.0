@@ -18,7 +18,7 @@ public class CommentController {
     @PostMapping("/comments")
     public Mono<String> addComment(Mono<Comment> newComment) {
         return newComment.map(comment ->
-                restTemplate.postForEntity("http://COMMENTS-SERVICE/comments",
+                restTemplate.postForEntity("http://COMMENTS/comments",
                         comment, Comment.class)
         ).then(Mono.just("redirect:/"));
     }
