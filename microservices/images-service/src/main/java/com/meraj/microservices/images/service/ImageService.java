@@ -69,10 +69,12 @@ public class ImageService {
         Image image = new Image();
         image.setName(filename);
         Example<Image> example = Example.of(image);
-        Mono<Image> deleteImage = imageRepository.findOne(example);
+        Flux<Image> deleteImages = imageRepository.findAll(example);
 
-        Mono<Void> deleteDatabaseImage = deleteImage
-                .flatMap(imageRepository::delete);
+        Flux<Void> deleteDatabaseImage = deleteImages.
+                flatMap(deleteImage ->
+                     imageRepository.delete(deleteImage)
+                );
 
         Mono<Void> deleteFile = Mono.fromRunnable(() -> {
             try {
