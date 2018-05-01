@@ -2,20 +2,25 @@ package com.meraj.microservices.comments.service;
 
 import com.meraj.microservices.comments.model.Comment;
 import com.meraj.microservices.comments.repository.CommentRepository;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Example;
-import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@EnableBinding(Processor.class)
 public class CommentService {
+    private static final Logger log = LoggerFactory.getLogger(CommentService.class);
+
     private CommentRepository commentRepository;
 
     public CommentService(CommentRepository commentRepository) {
@@ -29,21 +34,14 @@ public class CommentService {
         return commentRepository.findAll(example);
     }
 
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue,
-            exchange = @Exchange(value = "imageservice"),
-            key = "comment.new"
-    ))
-    public void createComment(Comment newComment) {
-        commentRepository
-                .save(newComment)
-                .log("commentService-save")
-                .subscribe();
+    @StreamListener(Processor.INPUT)
+    @Output(Processor.OUTPUT)
+    public Flux<Void> createComment(Flux<Comment> newComment) {
+        return commentRepository
+                .saveAll(newComment)
+                .flatMap(comment -> {
+                    log.info("Saving new comment: " + comment);
+                    return Mono.empty();
+                });
     }
-
-    @Bean
-    Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
 }

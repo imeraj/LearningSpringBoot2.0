@@ -50,8 +50,6 @@ public class ImageController {
         return Mono.just("index");
     }
 
-
-
     @GetMapping(value = "/images/" + FILENAME + "/raw",
             produces = MediaType.IMAGE_JPEG_VALUE)
     public Mono<ResponseEntity<?>> oneRawImage(@PathVariable String filename) {

@@ -25,9 +25,4 @@ public class CommentController {
     public Flux<Comment> comments(@PathVariable String imageId) {
         return commentService.findAllComments(imageId);
     }
-
-    @PostMapping("/comments")
-    public void addComment(@RequestBody Comment newComment) {
-        commentService.createComment(newComment);
-    }
 }
