@@ -10,4 +10,10 @@ spring:
           group: comments-chat
           content-type: application/json
         newComments:
-          
+          destination: lombok-chat
+          gtoup: comment-chat
+          content-type: application/json
+        clientToBroker:
+          destination: lombok-chat-user-messages
+          group: topic-chatMesasges
+

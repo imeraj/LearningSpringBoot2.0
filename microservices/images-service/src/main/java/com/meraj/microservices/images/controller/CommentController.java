@@ -1,22 +1,23 @@
 package com.meraj.microservices.images.controller;
 
 import com.meraj.microservices.images.model.Comment;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.reactive.FluxSender;
 import org.springframework.cloud.stream.reactive.StreamEmitter;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.messaging.Message;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
-@Controller
+@RestController
 @EnableBinding(Source.class)
 public class CommentController {
     private FluxSink<Message<Comment>> commentSink;
@@ -31,7 +32,7 @@ public class CommentController {
     }
 
     @PostMapping("/comments")
-    public Mono<String> addComment(Mono<Comment> newComment) {
+    public Mono<ResponseEntity<?>> addComment(Mono<Comment> newComment) {
         if (commentSink != null) {
             return newComment
                     .map(comment -> {
@@ -43,9 +44,9 @@ public class CommentController {
                                 .build());
                         return comment;
                     })
-                    .flatMap(comment -> Mono.just("redirect:/"));
+                    .flatMap(comment -> Mono.just(ResponseEntity.noContent().build()));
         } else {
-            return Mono.just("redirect:/");
+            return Mono.just(ResponseEntity.noContent().build());
         }
     }
 
