@@ -1,0 +1,19 @@
+server:
+  port: 8200
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: lombok-chat
+          group: comments-chat
+          content-type: application/json
+        newComments:
+          destination: lombok-chat
+          gtoup: comment-chat
+          content-type: application/json
+        clientToBroker:
+          destination: lombok-chat-user-messages
+          group: topic-chatMesasges
+
