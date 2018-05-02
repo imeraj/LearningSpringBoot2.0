@@ -1,6 +1,5 @@
 package com.meraj.microservices.images.initializers;
 
-import com.meraj.microservices.images.model.Image;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoOperations;

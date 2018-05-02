@@ -1,28 +1,19 @@
 package com.meraj.microservices.images.controller;
 
 import com.meraj.microservices.images.helpers.CommentHelper;
-import com.meraj.microservices.images.model.Comment;
-import com.meraj.microservices.images.model.Image;
 import com.meraj.microservices.images.service.ImageService;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 @Controller
 public class ImageController {

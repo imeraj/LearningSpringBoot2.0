@@ -29,4 +29,6 @@ spring:
           group: comments
           content-type: application/json
         output:
-          destination: lombok
+          destination: lombok-chat
+          group: comments-chat
+          content-type: application/json

@@ -4,14 +4,11 @@ import com.meraj.microservices.comments.model.Comment;
 import com.meraj.microservices.comments.repository.CommentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Example;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,12 +33,12 @@ public class CommentService {
 
     @StreamListener(Processor.INPUT)
     @Output(Processor.OUTPUT)
-    public Flux<Void> createComment(Flux<Comment> newComment) {
+    public Flux<Comment> createComment(Flux<Comment> newComment) {
         return commentRepository
                 .saveAll(newComment)
-                .flatMap(comment -> {
+                .map(comment -> {
                     log.info("Saving new comment: " + comment);
-                    return Mono.empty();
+                    return comment;
                 });
     }
 }
