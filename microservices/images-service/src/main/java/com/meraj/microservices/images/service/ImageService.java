@@ -87,6 +87,13 @@ public class ImageService {
         return Mono.when(deleteDatabaseImage, deleteFile)
                 .then();
     }
+
+//    @Bean
+//    CommandLineRunner setUp(ImageRepository imageRepository) {
+//        return args -> {
+//            imageRepository.deleteAll().subscribe();
+//        };
+//    }
 }
 
 
